@@ -17,6 +17,10 @@ export default createGlobalStyle`
     font: 16px Roboto, sans-serif;
   }
 
+  #root {
+    height: 100vh;
+  }
+
   button {
     cursor: pointer;
   }
