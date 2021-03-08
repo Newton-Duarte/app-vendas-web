@@ -66,10 +66,15 @@ const SignIn: React.FC = () => {
         password: data.password
       });
     } catch (error) {
-      const errors = getValidationErrors(error);
-      formRef.current?.setErrors(errors);
+      if (error instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(error);
+        formRef.current?.setErrors(errors);
+  
+        return;
+      }
 
-      return;
+      // TODO: Criar Toast
+      console.log('Error', error);
     }
   }, [signIn]);
 

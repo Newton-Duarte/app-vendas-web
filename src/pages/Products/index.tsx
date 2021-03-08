@@ -3,7 +3,9 @@ import EnhancedTable from '../../components/DataTable';
 
 const Products: React.FC = () => {
   return (
-    <EnhancedTable />
+    <EnhancedTable
+      title="Produtos"
+    />
   );
 }
 

@@ -15,6 +15,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import { Typography } from '@material-ui/core';
 import { Folder } from '@material-ui/icons';
 import { RouterProps, withRouter } from 'react-router-dom';
+import { useAuth } from '../../hooks/auth';
 
 const drawerWidth = 240;
 
@@ -54,7 +55,8 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const MiniDrawer = ({ history }: RouterProps) => {
+const MiniDrawer: React.FC<RouterProps> = ({ history }) => {
+  const { user } = useAuth();
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -71,44 +73,48 @@ const MiniDrawer = ({ history }: RouterProps) => {
   };
 
   return (
-    <Drawer
-      variant="permanent"
-      className={clsx(classes.drawer, {
-        [classes.drawerOpen]: open,
-        [classes.drawerClose]: !open,
-      })}
-      classes={{
-        paper: clsx({
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
-        }),
-      }}
-    >
-      <div className={classes.toolbar}>
-        {open && <Typography>App Vendas Web</Typography>}
-        <IconButton onClick={handleToggleDrawer}>
-          {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-        </IconButton>
-      </div>
-      <Divider />
-      <List>
-        {links.map((link, index) => (
-          <ListItem button key={index} onClick={link.onClick}>
-            <ListItemIcon>{link.icon}</ListItemIcon>
-            <ListItemText primary={link.text} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-    </Drawer>
+    <>
+      {user && (
+        <Drawer
+          variant="permanent"
+          className={clsx(classes.drawer, {
+            [classes.drawerOpen]: open,
+            [classes.drawerClose]: !open,
+          })}
+          classes={{
+            paper: clsx({
+              [classes.drawerOpen]: open,
+              [classes.drawerClose]: !open,
+            }),
+          }}
+        >
+          <div className={classes.toolbar}>
+            {open && <Typography>App Vendas Web</Typography>}
+            <IconButton onClick={handleToggleDrawer}>
+              {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </div>
+          <Divider />
+          <List>
+            {links.map((link, index) => (
+              <ListItem button key={index} onClick={link.onClick}>
+                <ListItemIcon>{link.icon}</ListItemIcon>
+                <ListItemText primary={link.text} />
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+          <List>
+            {['All mail', 'Trash', 'Spam'].map((text, index) => (
+              <ListItem button key={text}>
+                <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+      )}
+    </>
   );
 }
 
