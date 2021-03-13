@@ -4,13 +4,15 @@ import Route from './Route';
 
 import Dashboard from '../pages/Dashboard';
 import Products from '../pages/Products';
+import Groups from '../pages/Groups';
 
 import SignIn from '../pages/SignIn';
 
 const Routes: React.FC = () => (
   <Switch>
     <Route path="/" exact component={Dashboard} isPrivate />
-    <Route path="/produtos" exact component={Products} isPrivate />
+    <Route path="/produtos" component={Products} isPrivate />
+    <Route path="/grupos" component={Groups} isPrivate />
     <Route path="/signin" component={SignIn} />
   </Switch>
 )
