@@ -15,8 +15,11 @@ import {
   Paper,
   Checkbox,
   IconButton,
-  Tooltip
+  Tooltip,
+  Button,
+  TextField
 } from '@material-ui/core'
+import { convertStringToCompare } from '../../utils/convertStringToCompare';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
@@ -139,13 +142,28 @@ const useToolbarStyles = makeStyles((theme: Theme) =>
 interface EnhancedTableToolbarProps {
   title: string;
   numSelected: number;
+  onSearch(text: string): void;
+  onNew(): void;
   onEdit(): void;
   onDelete(): void;
 }
 
 const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [searchTimeout, setSearchTimeout] = React.useState<number | undefined>();
   const classes = useToolbarStyles();
-  const { title, numSelected, onEdit, onDelete } = props;
+  const { title, numSelected, onSearch, onNew, onEdit, onDelete } = props;
+
+  function handleSearch(text: string) {
+    if (searchTimeout) {
+      window.clearTimeout(searchTimeout);
+      setSearchTimeout(undefined);
+    }
+    setSearchTerm(text);
+    setSearchTimeout(
+      window.setTimeout(() => onSearch(text), 500)
+    );
+  };
 
   return (
     <Toolbar
@@ -158,9 +176,20 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          {title}
-        </Typography>
+        <>
+          <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+            {title}
+          </Typography>
+          <TextField
+            type="search"
+            size="small"
+            variant="filled"
+            label="Pesquisar"
+            fullWidth
+            value={searchTerm}
+            onChange={e => handleSearch(e.currentTarget.value)}
+          />
+        </>
       )}
       {numSelected > 0 ? (
         <>
@@ -176,11 +205,16 @@ const EnhancedTableToolbar = (props: EnhancedTableToolbarProps) => {
           </Tooltip>
         </>
       ) : (
-        <Tooltip title="Filter list">
+        <>
           <IconButton aria-label="filter list">
             <FilterListIcon />
           </IconButton>
-        </Tooltip>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onNew}
+          >Novo</Button>
+        </>
       )}
     </Toolbar>
   );
@@ -221,6 +255,7 @@ interface GridProps {
   title: string;
   headers: HeadCell[];
   data: DataProps[];
+  onNew(): void;
   onEdit(items: string[]): void;
   onDelete(items: string[]): void;
 }
@@ -229,6 +264,7 @@ const EnhancedTable: React.FC<GridProps> = ({
   title,
   headers,
   data,
+  onNew,
   onEdit,
   onDelete
 }) => {
@@ -238,6 +274,22 @@ const EnhancedTable: React.FC<GridProps> = ({
   const [selected, setSelected] = React.useState<string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [computedData, setComputedData] = React.useState<DataProps[]>([]);
+  const [search, setSearch] = React.useState('');
+
+  React.useEffect(() => {
+    if (search) {
+      setComputedData(
+        data.filter(
+          obj => Object.keys(obj)
+            .some(key => convertStringToCompare(obj[key] as string)
+            .includes(convertStringToCompare(search)))
+        )
+      );
+    } else {
+      setComputedData(data);
+    }
+  }, [data, search]);
 
   const handleRequestSort = (event: React.MouseEvent<unknown>, property: keyof DataProps) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -247,7 +299,7 @@ const EnhancedTable: React.FC<GridProps> = ({
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = data.map((n) => n.id);
+      const newSelecteds = computedData.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -285,7 +337,7 @@ const EnhancedTable: React.FC<GridProps> = ({
 
   const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
-  const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+  const emptyRows = rowsPerPage - Math.min(rowsPerPage, computedData.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
@@ -293,6 +345,8 @@ const EnhancedTable: React.FC<GridProps> = ({
         <EnhancedTableToolbar
           title={title}
           numSelected={selected.length}
+          onSearch={text => setSearch(text)}
+          onNew={onNew}
           onEdit={() => onEdit(selected)}
           onDelete={() => onDelete(selected)}
         />
@@ -311,10 +365,10 @@ const EnhancedTable: React.FC<GridProps> = ({
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={data.length}
+              rowCount={computedData.length}
             />
             <TableBody>
-              {stableSort(data, getComparator(order, orderBy))
+              {stableSort(computedData, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.id);
@@ -359,7 +413,7 @@ const EnhancedTable: React.FC<GridProps> = ({
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data.length}
+          count={computedData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onChangePage={handleChangePage}

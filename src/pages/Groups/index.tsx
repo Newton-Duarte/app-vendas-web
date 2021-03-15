@@ -1,7 +1,11 @@
 import React from 'react';
+
+import Modal from '../../components/Modal';
 import EnhancedTable from '../../components/DataTable';
 
 const Groups: React.FC = () => {
+  const [modalOpen, setModalOpen] = React.useState(false);
+
   const groupsData = [
     {
       id: '1',
@@ -30,6 +34,10 @@ const Groups: React.FC = () => {
     { id: 'name', numeric: false, disablePadding: false, label: 'Descrição' }
   ]
 
+  function onNew() {
+    setModalOpen(true);
+  }
+
   function onEdit(payload: string[]) {
     console.log('editing', payload);
   }
@@ -39,13 +47,20 @@ const Groups: React.FC = () => {
   }
 
   return (
-    <EnhancedTable
-      title="Grupos"
-      headers={groupsHeaders}
-      data={groupsData}
-      onEdit={onEdit}
-      onDelete={onDelete}
-    />
+    <>
+      <Modal
+        modalOpen={modalOpen}
+        onClose={() => setModalOpen(!modalOpen)}
+      />
+      <EnhancedTable
+        title="Grupos"
+        headers={groupsHeaders}
+        data={groupsData}
+        onNew={onNew}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    </>
   );
 }
 

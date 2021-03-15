@@ -55,6 +55,7 @@ const Products: React.FC = () => {
       title="Produtos"
       headers={productsHeaders}
       data={productsData}
+      onNew={() => {}}
       onEdit={onEdit}
       onDelete={onDelete}
     />
