@@ -351,64 +351,73 @@ const EnhancedTable: React.FC<GridProps> = ({
           onDelete={() => onDelete(selected)}
         />
         <TableContainer>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size="small"
-            aria-label="enhanced table"
-          >
-            <EnhancedTableHead
-              headers={headers}
-              classes={classes}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={computedData.length}
-            />
-            <TableBody>
-              {stableSort(computedData, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+          {computedData && (
+            <Table
+              className={classes.table}
+              aria-labelledby="tableTitle"
+              size="small"
+              aria-label="enhanced table"
+            >
+              <EnhancedTableHead
+                headers={headers}
+                classes={classes}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={computedData.length}
+              />
+              <TableBody>
+                {computedData.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6}>
+                      <Typography align="center">Nenhum registro encontrado!</Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
+                {computedData.length > 0 && stableSort(computedData, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.id)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.id}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
-                      {Object.keys(row).map((rowKey, index) => (
-                        <TableCell
-                          key={index}
-                          id={labelId}
-                          scope="row"
-                        >
-                          {row[rowKey]}
+                    return (
+                      <TableRow
+                        hover
+                        onClick={(event) => handleClick(event, row.id)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.id}
+                        selected={isItemSelected}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={isItemSelected}
+                            inputProps={{ 'aria-labelledby': labelId }}
+                          />
                         </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: 33 * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                        {Object.keys(row).map((rowKey, index) => (
+                          <TableCell
+                            key={index}
+                            id={labelId}
+                            scope="row"
+                          >
+                            {row[rowKey]}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: 33 * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          )}
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}

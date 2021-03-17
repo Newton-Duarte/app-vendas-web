@@ -1,33 +1,12 @@
 import React from 'react';
 
-import Modal from '../../components/Modal';
+import ModalGroup, { CreateGroupData } from './ModalGroup';
 import EnhancedTable from '../../components/DataTable';
 
 const Groups: React.FC = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
-
-  const groupsData = [
-    {
-      id: '1',
-      name: 'Group 01',
-    },
-    {
-      id: '2',
-      name: 'Group 02'
-    },
-    {
-      id: '3',
-      name: 'Group 03'
-    },
-    {
-      id: '4',
-      name: 'Group 04'
-    },
-    {
-      id: '5',
-      name: 'Group 05'
-    }
-  ];
+  const [groupsData, setGroupsData] = React.useState<any[]>([]);
+  const [editGroup, setEditGroup] = React.useState();
 
   const groupsHeaders = [
     { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
@@ -38,8 +17,26 @@ const Groups: React.FC = () => {
     setModalOpen(true);
   }
 
+  function handleSave(data: CreateGroupData) {
+    const lastId = groupsData[groupsData.length - 1] ? groupsData[groupsData.length - 1].id + 1 : 1;
+
+    setGroupsData([
+      ...groupsData,
+      {
+        id: lastId,
+        ...data
+      }
+    ]);
+
+    setModalOpen(!modalOpen);
+  }
+
   function onEdit(payload: string[]) {
     console.log('editing', payload);
+    const groupId = payload[payload.length - 1];
+    const groupToEdit = groupsData.find(group => group.id === groupId);
+
+    setEditGroup(groupToEdit);
   }
 
   function onDelete(payload: string[]) {
@@ -48,8 +45,10 @@ const Groups: React.FC = () => {
 
   return (
     <>
-      <Modal
+      <ModalGroup
         modalOpen={modalOpen}
+        editGroup={editGroup}
+        onSave={handleSave}
         onClose={() => setModalOpen(!modalOpen)}
       />
       <EnhancedTable
