@@ -371,7 +371,7 @@ const EnhancedTable: React.FC<GridProps> = ({
               <TableBody>
                 {computedData.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={6}>
+                    <TableCell colSpan={headers.length + 1}>
                       <Typography align="center">Nenhum registro encontrado!</Typography>
                     </TableCell>
                   </TableRow>
@@ -412,7 +412,7 @@ const EnhancedTable: React.FC<GridProps> = ({
                   })}
                 {emptyRows > 0 && (
                   <TableRow style={{ height: 33 * emptyRows }}>
-                    <TableCell colSpan={6} />
+                    <TableCell colSpan={headers.length + 1} />
                   </TableRow>
                 )}
               </TableBody>
