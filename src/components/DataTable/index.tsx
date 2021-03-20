@@ -248,7 +248,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface DataProps {
   id: string;
-  [key: string]: string | number;
+  [key: string]: any;
 }
 
 interface GridProps {
@@ -335,6 +335,11 @@ const EnhancedTable: React.FC<GridProps> = ({
     setPage(0);
   };
 
+  const handleDelete = () => {
+    onDelete(selected);
+    setSelected([]);
+  }
+
   const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, computedData.length - page * rowsPerPage);
@@ -348,7 +353,7 @@ const EnhancedTable: React.FC<GridProps> = ({
           onSearch={text => setSearch(text)}
           onNew={onNew}
           onEdit={() => onEdit(selected)}
-          onDelete={() => onDelete(selected)}
+          onDelete={handleDelete}
         />
         <TableContainer>
           {computedData && (
@@ -379,13 +384,13 @@ const EnhancedTable: React.FC<GridProps> = ({
                 {computedData.length > 0 && stableSort(computedData, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const isItemSelected = isSelected(row.id);
+                    const isItemSelected = isSelected(row.id as string);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row.id)}
+                        onClick={(event) => handleClick(event, row.id as string)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}

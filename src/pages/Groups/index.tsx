@@ -1,37 +1,42 @@
 import React from 'react';
+import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
+import { addGroup, updateGroup, removeGroup, removeGroups, Selectors, GroupFormData } from '../../store/slices/GroupSlice';
 import ModalGroup, { CreateGroupData } from './ModalGroup';
 import EnhancedTable from '../../components/DataTable';
 
 const Groups: React.FC = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [groupsData, setGroupsData] = React.useState<any[]>([]);
-  const [editGroup, setEditGroup] = React.useState();
+  // const [groupsData, setGroupsData] = React.useState<any[]>([]);
+  const [editGroup, setEditGroup] = React.useState<GroupFormData>();
+
+  const dispatch = useAppDispatch();
+
+  const groupsData = useAppSelector(Selectors.groups);
 
   const groupsHeaders = [
     { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
     { id: 'name', numeric: false, disablePadding: false, label: 'Descrição' }
   ]
 
-  function onNew() {
+  const onNew = () => {
     setModalOpen(true);
   }
 
-  function handleSave(data: CreateGroupData) {
+  const handleSave = (data: CreateGroupData) => {
     const lastId = groupsData[groupsData.length - 1] ? groupsData[groupsData.length - 1].id + 1 : 1;
 
-    setGroupsData([
-      ...groupsData,
-      {
+    dispatch(
+      addGroup({
         id: lastId,
         ...data
-      }
-    ]);
+      })
+    );
 
     setModalOpen(!modalOpen);
   }
 
-  function onEdit(payload: string[]) {
+  const onEdit = (payload: string[]) => {
     console.log('editing', payload);
     const groupId = payload[payload.length - 1];
     const groupToEdit = groupsData.find(group => group.id === groupId);
@@ -39,8 +44,12 @@ const Groups: React.FC = () => {
     setEditGroup(groupToEdit);
   }
 
-  function onDelete(payload: string[]) {
-    console.log('deleting', payload);
+  const onDelete =(payload: string[]) => {
+    if (window.confirm('Are you sure?')) {
+      dispatch(
+        removeGroups(payload)
+      )
+    }
   }
 
   return (
