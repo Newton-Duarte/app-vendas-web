@@ -1,11 +1,17 @@
 import React from 'react';
+
+import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
+import { addProduct, updateProduct, removeProducts, Selectors, ProductFormData } from '../../store/slices/ProductSlice';
 import EnhancedTable from '../../components/DataTable';
-import ModalProduct, { CreateProductData } from './ModalProduct';
+import ModalProduct from './ModalProduct';
 
 const Products: React.FC = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [productsData, setProductsData] = React.useState<any[]>([]);
-  const [editProduct, setEditProduct] = React.useState();
+  const [editingProduct, setEditingProduct] = React.useState<ProductFormData>();
+
+  const dispatch = useAppDispatch();
+
+  const productsData = useAppSelector(Selectors.products);
 
   const productsHeaders = [
     { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
@@ -21,37 +27,47 @@ const Products: React.FC = () => {
     setModalOpen(true);
   }
 
-  function handleSave(data: CreateProductData) {
-    const lastId = productsData[productsData.length - 1] ? productsData[productsData.length - 1].id + 1 : 1;
-
-    setProductsData([
-      ...productsData,
-      {
-        id: lastId,
-        ...data
-      }
-    ]);
+  function handleSave(data: ProductFormData) {
+    if (data.id) {
+      dispatch(
+        updateProduct(data)
+      );
+    } else {
+      const lastId = productsData[productsData.length - 1] ? +productsData[productsData.length - 1].id + 1 : 1;
+      data.id = lastId.toString();
+  
+      dispatch(
+        addProduct({
+          ...data
+        })
+      );
+    }
 
     setModalOpen(!modalOpen);
+    setEditingProduct({} as ProductFormData);
   }
 
   function onEdit(payload: string[]) {
-    console.log('editing', payload);
     const productId = payload[payload.length - 1];
     const productToEdit = productsData.find(product => product.id === productId);
 
-    setEditProduct(productToEdit);
+    setEditingProduct(productToEdit);
+    setModalOpen(true);
   }
 
   function onDelete(payload: string[]) {
-    console.log('deleting', payload);
+    if (window.confirm('Are you sure?')) {
+      dispatch(
+        removeProducts(payload)
+      )
+    }
   }
 
   return (
     <>
       <ModalProduct
         modalOpen={modalOpen}
-        editProduct={editProduct}
+        editingProduct={editingProduct}
         onSave={handleSave}
         onClose={() => setModalOpen(!modalOpen)}
       />

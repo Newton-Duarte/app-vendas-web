@@ -7,6 +7,7 @@ import Modal from '../../../components/Modal';
 import Input from '../../../components/Input';
 import { Button, DialogActions, DialogContent, DialogTitle, makeStyles } from '@material-ui/core';
 import getValidationErrors from '../../../utils/getValidationErrors';
+import { ProductFormData } from '../../../store/slices/ProductSlice';
 
 const useStyles = makeStyles({
   paper: {
@@ -14,45 +15,29 @@ const useStyles = makeStyles({
   }
 })
 
-export interface ProductFormData {
-  id: string;
-  name: string;
-  unit: string;
-  sale_price: string;
-  buy_price: string;
-  group: string;
-  division: string
-}
-
-export interface CreateProductData {
-  name: string;
-  unit: string;
-  sale_price: string;
-  buy_price: string;
-  group: string;
-  division: string
-}
-
 interface ModalProductProps {
   modalOpen: boolean;
-  editProduct: ProductFormData | undefined;
-  onSave(data: Omit<ProductFormData, 'id'>): any;
+  editingProduct: ProductFormData | undefined;
+  onSave(data: ProductFormData): any;
   onClose(): void;
 }
 
 const ModalProduct: React.FC<ModalProductProps> = ({
   modalOpen,
+  editingProduct,
   onSave,
   onClose
 }) => {
+  const productObj = editingProduct ? editingProduct : {} as ProductFormData;
   const classes = useStyles();
   const formRef = useRef<FormHandles>(null);
 
-  const handleSubmit = useCallback(async (data: CreateProductData) => {
+  const handleSubmit = useCallback(async (data: ProductFormData) => {
     try {
       formRef.current?.setErrors({});
   
       const schema = Yup.object().shape({
+        id: Yup.string(),
         name: Yup.string().required('Nome do produto obrigatório'),
         unit: Yup.string().required('Unidade do produto obrigatório'),
         sale_price: Yup.string().required('Preco de venda do produto obrigatório'),
@@ -89,8 +74,14 @@ const ModalProduct: React.FC<ModalProductProps> = ({
       <Form
         ref={formRef}
         onSubmit={handleSubmit}
+        initialData={productObj}
       >
         <DialogContent dividers>
+          <Input
+            type="hidden"
+            id="id"
+            name="id"
+          />
           <Input
             variant="filled"
             margin="normal"

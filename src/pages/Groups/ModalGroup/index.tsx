@@ -7,42 +7,37 @@ import Modal from '../../../components/Modal';
 import Input from '../../../components/Input';
 import { Button, DialogActions, DialogContent, DialogTitle, makeStyles } from '@material-ui/core';
 import getValidationErrors from '../../../utils/getValidationErrors';
+import { GroupFormData } from '../../../store/slices/GroupSlice';
 
 const useStyles = makeStyles({
   paper: {
     background: '#F0F0F5'
   }
-})
-
-export interface GroupFormData {
-  id: string;
-  name: string;
-}
-
-export interface CreateGroupData {
-  name: string;
-}
+});
 
 interface ModalGroupProps {
   modalOpen: boolean;
-  editGroup: GroupFormData | undefined;
-  onSave(data: Omit<GroupFormData, 'id'>): any;
+  editingGroup: GroupFormData | undefined;
+  onSave(data: GroupFormData): any;
   onClose(): void;
 }
 
 const ModalGroup: React.FC<ModalGroupProps> = ({
   modalOpen,
+  editingGroup,
   onSave,
   onClose
 }) => {
+  const groupObj = editingGroup ? editingGroup : {} as GroupFormData;
   const classes = useStyles();
   const formRef = useRef<FormHandles>(null);
 
-  const handleSubmit = useCallback(async (data: CreateGroupData) => {
+  const handleSubmit = useCallback(async (data: GroupFormData) => {
     try {
       formRef.current?.setErrors({});
   
       const schema = Yup.object().shape({
+        id: Yup.string(),
         name: Yup.string().required('Nome do grupo obrigatório')
       });
   
@@ -74,8 +69,14 @@ const ModalGroup: React.FC<ModalGroupProps> = ({
       <Form
         ref={formRef}
         onSubmit={handleSubmit}
+        initialData={groupObj}
       >
         <DialogContent dividers>
+          <Input
+            type="hidden"
+            id="id"
+            name="id"
+          />
           <Input
             variant="filled"
             margin="normal"

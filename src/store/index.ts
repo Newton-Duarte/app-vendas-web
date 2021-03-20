@@ -1,8 +1,10 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import groupSlice from './slices/GroupSlice';
+import productSlice from './slices/ProductSlice';
 
 const reducer = combineReducers({
-  group: groupSlice
+  group: groupSlice,
+  product: productSlice,
 });
 
 const store = configureStore({

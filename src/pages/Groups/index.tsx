@@ -1,14 +1,13 @@
 import React from 'react';
-import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
 
-import { addGroup, updateGroup, removeGroup, removeGroups, Selectors, GroupFormData } from '../../store/slices/GroupSlice';
-import ModalGroup, { CreateGroupData } from './ModalGroup';
+import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
+import { addGroup, updateGroup, removeGroups, Selectors, GroupFormData } from '../../store/slices/GroupSlice';
+import ModalGroup from './ModalGroup';
 import EnhancedTable from '../../components/DataTable';
 
 const Groups: React.FC = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
-  // const [groupsData, setGroupsData] = React.useState<any[]>([]);
-  const [editGroup, setEditGroup] = React.useState<GroupFormData>();
+  const [editingGroup, setEditingGroup] = React.useState<GroupFormData>();
 
   const dispatch = useAppDispatch();
 
@@ -23,25 +22,32 @@ const Groups: React.FC = () => {
     setModalOpen(true);
   }
 
-  const handleSave = (data: CreateGroupData) => {
-    const lastId = groupsData[groupsData.length - 1] ? groupsData[groupsData.length - 1].id + 1 : 1;
-
-    dispatch(
-      addGroup({
-        id: lastId,
-        ...data
-      })
-    );
+  const handleSave = (data: GroupFormData) => {
+    if (data.id) {
+      dispatch(
+        updateGroup(data)
+      );
+    } else {
+      const lastId = groupsData[groupsData.length - 1] ? +groupsData[groupsData.length - 1].id + 1 : 1;
+      data.id = lastId.toString();
+  
+      dispatch(
+        addGroup({
+          ...data
+        })
+      );
+    }
 
     setModalOpen(!modalOpen);
+    setEditingGroup({} as GroupFormData);
   }
 
   const onEdit = (payload: string[]) => {
-    console.log('editing', payload);
     const groupId = payload[payload.length - 1];
     const groupToEdit = groupsData.find(group => group.id === groupId);
 
-    setEditGroup(groupToEdit);
+    setEditingGroup(groupToEdit);
+    setModalOpen(true);
   }
 
   const onDelete =(payload: string[]) => {
@@ -56,7 +62,7 @@ const Groups: React.FC = () => {
     <>
       <ModalGroup
         modalOpen={modalOpen}
-        editGroup={editGroup}
+        editingGroup={editingGroup}
         onSave={handleSave}
         onClose={() => setModalOpen(!modalOpen)}
       />
