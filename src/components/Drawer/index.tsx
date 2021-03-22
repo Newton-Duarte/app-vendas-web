@@ -70,6 +70,11 @@ const MiniDrawer: React.FC<RouterProps> = ({ history }) => {
       text: 'Grupos',
       icon: <Folder />,
       onClick: () => history.push('/grupos')
+    },
+    {
+      text: 'Divisões',
+      icon: <Folder />,
+      onClick: () => history.push('/divisoes')
     }
   ]
 

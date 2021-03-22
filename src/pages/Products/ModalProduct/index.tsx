@@ -11,6 +11,7 @@ import Combobox from '../../../components/Combobox';
 import getValidationErrors from '../../../utils/getValidationErrors';
 import { ProductFormData } from '../../../store/slices/ProductSlice';
 import { Selectors } from '../../../store/slices/GroupSlice';
+import { Selectors as DivisionSelectors } from '../../../store/slices/DivisionSlice';
 
 const useStyles = makeStyles({
   paper: {
@@ -39,6 +40,7 @@ const ModalProduct: React.FC<ModalProductProps> = ({
   const dispatch = useAppDispatch();
 
   const groupsData = useAppSelector(Selectors.groups);
+  const divisionsData = useAppSelector(DivisionSelectors.divisions);
 
   const handleSubmit = useCallback(async (data: ProductFormData) => {
     try {
@@ -135,7 +137,7 @@ const ModalProduct: React.FC<ModalProductProps> = ({
             name="division"
             label="Divisão"
             optionTitle="name"
-            options={groupsData}
+            options={divisionsData}
           />
         </DialogContent>
         <DialogActions>
