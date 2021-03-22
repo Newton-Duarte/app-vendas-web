@@ -2,12 +2,15 @@ import React, { useCallback, useRef } from 'react';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
+import { Button, DialogActions, DialogContent, DialogTitle, makeStyles } from '@material-ui/core';
 
+import { useAppSelector, useAppDispatch } from '../../../hooks/hooks';
 import Modal from '../../../components/Modal';
 import Input from '../../../components/Input';
-import { Button, DialogActions, DialogContent, DialogTitle, makeStyles } from '@material-ui/core';
+import Combobox from '../../../components/Combobox';
 import getValidationErrors from '../../../utils/getValidationErrors';
 import { ProductFormData } from '../../../store/slices/ProductSlice';
+import { Selectors } from '../../../store/slices/GroupSlice';
 
 const useStyles = makeStyles({
   paper: {
@@ -28,9 +31,14 @@ const ModalProduct: React.FC<ModalProductProps> = ({
   onSave,
   onClose
 }) => {
+
   const productObj = editingProduct ? editingProduct : {} as ProductFormData;
   const classes = useStyles();
   const formRef = useRef<FormHandles>(null);
+
+  const dispatch = useAppDispatch();
+
+  const groupsData = useAppSelector(Selectors.groups);
 
   const handleSubmit = useCallback(async (data: ProductFormData) => {
     try {
@@ -115,21 +123,19 @@ const ModalProduct: React.FC<ModalProductProps> = ({
             label="Preco de Compra"
             fullWidth
           />
-          <Input
-            variant="filled"
-            margin="normal"
+          <Combobox
             id="group"
             name="group"
             label="Grupo"
-            fullWidth
+            optionTitle="name"
+            options={groupsData}
           />
-          <Input
-            variant="filled"
-            margin="normal"
+          <Combobox
             id="division"
             name="division"
             label="Divisão"
-            fullWidth
+            optionTitle="name"
+            options={groupsData}
           />
         </DialogContent>
         <DialogActions>
