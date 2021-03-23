@@ -10,7 +10,8 @@ import Input from '../../../components/Input';
 import Combobox from '../../../components/Combobox';
 import getValidationErrors from '../../../utils/getValidationErrors';
 import { ProductFormData } from '../../../store/slices/ProductSlice';
-import { Selectors } from '../../../store/slices/GroupSlice';
+import { Selectors as UnitSelectors } from '../../../store/slices/UnitSlice';
+import { Selectors as GroupSelectors } from '../../../store/slices/GroupSlice';
 import { Selectors as DivisionSelectors } from '../../../store/slices/DivisionSlice';
 
 const useStyles = makeStyles({
@@ -32,15 +33,42 @@ const ModalProduct: React.FC<ModalProductProps> = ({
   onSave,
   onClose
 }) => {
+  const unitsData = useAppSelector(UnitSelectors.units);
+  const groupsData = useAppSelector(GroupSelectors.groups);
+  const divisionsData = useAppSelector(DivisionSelectors.divisions);
 
   const productObj = editingProduct ? editingProduct : {} as ProductFormData;
   const classes = useStyles();
   const formRef = useRef<FormHandles>(null);
+  // const comboboxUnitsOpen = React.useState(false);
+  // const comboboxGroupsOpen = React.useState(false);
+  // const comboboxDivisionsOpen = React.useState(false);
+  // const loadingUnits = comboboxUnitsOpen && unitsData.length === 0;
+  // const loadingGroups = comboboxGroupsOpen && groupsData.length === 0;
+  // const loadingDivisions = comboboxDivisionsOpen && divisionsData.length === 0;
 
-  const dispatch = useAppDispatch();
+  // const dispatch = useAppDispatch();
 
-  const groupsData = useAppSelector(Selectors.groups);
-  const divisionsData = useAppSelector(DivisionSelectors.divisions);
+  // React.useEffect(() => {
+  //   let active = true;
+
+  //   if (!loadingGroups) {
+  //     return undefined;
+  //   }
+
+  //   (async () => {
+  //     const response = await fetchGroups...
+  //     const groups = response.data;
+
+  //     if (active) {
+  //       setgroups([...groups])
+  //     }
+  //   })();
+
+  //   return () => {
+  //     active = false;
+  //   }
+  // }, [loadingGroups]);
 
   const handleSubmit = useCallback(async (data: ProductFormData) => {
     try {
@@ -101,13 +129,12 @@ const ModalProduct: React.FC<ModalProductProps> = ({
             autoFocus
             fullWidth
           />
-          <Input
-            variant="filled"
-            margin="normal"
+          <Combobox
             id="unit"
             name="unit"
             label="Unidade"
-            fullWidth
+            optionTitle="name"
+            options={unitsData}
           />
           <Input
             variant="filled"

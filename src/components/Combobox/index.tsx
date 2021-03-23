@@ -7,6 +7,7 @@ interface ComboboxProps {
   id: any;
   name: string;
   label: string;
+  open?: boolean;
   options: any[];
   optionTitle?: string;
 }
@@ -22,7 +23,7 @@ function isValuePrimitive(value: any) {
   return value !== Object(value);
 }
 
-const Combobox: React.FC<ComboboxProps> = ({ name, label, options, optionTitle = 'name', ...props }) => {
+const Combobox: React.FC<ComboboxProps> = ({ name, label, open, options, optionTitle = 'name', ...props }) => {
   const classes = useStyles();
   const inputRef = useRef(null);
   const { fieldName, defaultValue, error, registerField } = useField(name);
@@ -39,6 +40,7 @@ const Combobox: React.FC<ComboboxProps> = ({ name, label, options, optionTitle =
     <Autocomplete
       classes={classes}
       { ...props }
+      open={open}
       options={options}
       defaultValue={defaultValue}
       getOptionLabel={option => isValuePrimitive(option) ? option.toString() : option[optionTitle]}

@@ -1,9 +1,11 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import unitSlice from './slices/UnitSlice';
 import groupSlice from './slices/GroupSlice';
 import divisionSlice from './slices/DivisionSlice';
 import productSlice from './slices/ProductSlice';
 
 const reducer = combineReducers({
+  unit: unitSlice,
   group: groupSlice,
   product: productSlice,
   division: divisionSlice,
