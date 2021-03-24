@@ -5,8 +5,8 @@ export interface UnitFormData {
   id: string;
   name: string;
   abbreviation: string;
-  quanity: number;
-  is_fraction: boolean; // Change on backend
+  quantity: number;
+  // is_fraction: boolean; // Change on backend
 }
 
 export interface UnitState {

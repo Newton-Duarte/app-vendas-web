@@ -8,6 +8,7 @@ import Input from '../../../components/Input';
 import { Button, DialogActions, DialogContent, DialogTitle, makeStyles } from '@material-ui/core';
 import getValidationErrors from '../../../utils/getValidationErrors';
 import { UnitFormData } from '../../../store/slices/UnitSlice';
+// import TheCheckbox from '../../../components/TheCheckbox';
 
 const useStyles = makeStyles({
   paper: {
@@ -104,6 +105,12 @@ const ModalUnit: React.FC<ModalUnitProps> = ({
             label="Quantidade"
             fullWidth
           />
+          {/* TODO: Learn how to use checkbox true or false fields */}
+          {/* <TheCheckbox
+            name="is_fraction"
+            label="Fracionada?"
+            value="is_fraction"
+          /> */}
         </DialogContent>
         <DialogActions>
           <Button
