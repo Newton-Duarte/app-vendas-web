@@ -403,13 +403,13 @@ const EnhancedTable: React.FC<GridProps> = ({
                             inputProps={{ 'aria-labelledby': labelId }}
                           />
                         </TableCell>
-                        {Object.keys(row).map((rowKey, index) => (
+                        {Object.values(headers).map((rowKey, index) => (
                           <TableCell
                             key={index}
                             id={labelId}
                             scope="row"
                           >
-                            {row[rowKey]}
+                            {row[rowKey.id]}
                           </TableCell>
                         ))}
                       </TableRow>

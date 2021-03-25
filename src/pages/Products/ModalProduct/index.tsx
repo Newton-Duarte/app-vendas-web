@@ -10,6 +10,7 @@ import Input from '../../../components/Input';
 import Combobox from '../../../components/Combobox';
 import getValidationErrors from '../../../utils/getValidationErrors';
 import { ProductFormData } from '../../../store/slices/ProductSlice';
+import { createProductModel } from '../productUtils';
 import { Selectors as UnitSelectors } from '../../../store/slices/UnitSlice';
 import { Selectors as GroupSelectors } from '../../../store/slices/GroupSlice';
 import { Selectors as DivisionSelectors } from '../../../store/slices/DivisionSlice';
@@ -37,7 +38,7 @@ const ModalProduct: React.FC<ModalProductProps> = ({
   const groupsData = useAppSelector(GroupSelectors.groups);
   const divisionsData = useAppSelector(DivisionSelectors.divisions);
 
-  const productObj = editingProduct ? editingProduct : {} as ProductFormData;
+  const productObj = editingProduct ? createProductModel(editingProduct) : createProductModel();
   const classes = useStyles();
   const formRef = useRef<FormHandles>(null);
   // const comboboxUnitsOpen = React.useState(false);

@@ -7,6 +7,7 @@ import Products from '../pages/Products';
 import Units from '../pages/Units';
 import Groups from '../pages/Groups';
 import Divisions from '../pages/Divisions';
+import Customers from '../pages/Customers';
 
 import SignIn from '../pages/SignIn';
 
@@ -17,6 +18,7 @@ const Routes: React.FC = () => (
     <Route path="/unidades" component={Units} isPrivate />
     <Route path="/grupos" component={Groups} isPrivate />
     <Route path="/divisoes" component={Divisions} isPrivate />
+    <Route path="/clientes" component={Customers} isPrivate />
     <Route path="/signin" component={SignIn} />
   </Switch>
 )

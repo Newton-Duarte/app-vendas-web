@@ -8,6 +8,7 @@ import Input from '../../../components/Input';
 import { Button, DialogActions, DialogContent, DialogTitle, makeStyles } from '@material-ui/core';
 import getValidationErrors from '../../../utils/getValidationErrors';
 import { GroupFormData } from '../../../store/slices/GroupSlice';
+import { createGroupModel } from '../groupUtils';
 
 const useStyles = makeStyles({
   paper: {
@@ -28,7 +29,7 @@ const ModalGroup: React.FC<ModalGroupProps> = ({
   onSave,
   onClose
 }) => {
-  const groupObj = editingGroup ? editingGroup : {} as GroupFormData;
+  const groupObj = editingGroup ? createGroupModel(editingGroup) : createGroupModel();
   const classes = useStyles();
   const formRef = useRef<FormHandles>(null);
 

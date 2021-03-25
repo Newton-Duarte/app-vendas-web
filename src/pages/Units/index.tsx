@@ -17,8 +17,7 @@ const Units: React.FC = () => {
     { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
     { id: 'name', numeric: false, disablePadding: false, label: 'Descrição' },
     { id: 'abbreviation', numeric: false, disablePadding: false, label: 'Abreviação' },
-    { id: 'quantity', numeric: false, disablePadding: false, label: 'Quantidade' },
-    { id: 'is_fraction', numeric: false, disablePadding: false, label: 'Fração?' },
+    { id: 'quantity', numeric: false, disablePadding: false, label: 'Quantidade' }
   ]
 
   const onNew = () => {

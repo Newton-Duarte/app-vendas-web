@@ -7,9 +7,9 @@ import Modal from '../../../components/Modal';
 import Input from '../../../components/Input';
 import { Button, DialogActions, DialogContent, DialogTitle, makeStyles } from '@material-ui/core';
 import getValidationErrors from '../../../utils/getValidationErrors';
-import { UnitFormData } from '../../../store/slices/UnitSlice';
-import { createUnitModel } from '../unitUtils';
-// import TheCheckbox from '../../../components/TheCheckbox';
+import { CustomerFormData } from '../../../store/slices/CustomerSlice';
+import { createCustomerModel } from '../customerUtils';
+import TheSelect from '../../../components/TheSelect';
 
 const useStyles = makeStyles({
   paper: {
@@ -17,32 +17,37 @@ const useStyles = makeStyles({
   }
 });
 
-interface ModalUnitProps {
+interface ModalCustomerProps {
   modalOpen: boolean;
-  editingUnit: UnitFormData | undefined;
-  onSave(data: UnitFormData): any;
+  editingCustomer: CustomerFormData | undefined;
+  onSave(data: CustomerFormData): any;
   onClose(): void;
 }
 
-const ModalUnit: React.FC<ModalUnitProps> = ({
+const ModalCustomer: React.FC<ModalCustomerProps> = ({
   modalOpen,
-  editingUnit,
+  editingCustomer,
   onSave,
   onClose
 }) => {
-  const unitObj = editingUnit ? createUnitModel(editingUnit) : createUnitModel();
+  const customerObj = editingCustomer ? createCustomerModel(editingCustomer) : createCustomerModel() as CustomerFormData;
   const classes = useStyles();
   const formRef = useRef<FormHandles>(null);
 
-  const handleSubmit = useCallback(async (data: UnitFormData) => {
+  const handleSubmit = useCallback(async (data: CustomerFormData) => {
     try {
       formRef.current?.setErrors({});
   
       const schema = Yup.object().shape({
         id: Yup.string(),
-        name: Yup.string().required('Nome da unidade obrigatório'),
-        abbreviation: Yup.string().required('abreviação da unidade obrigatório'),
-        quantity: Yup.string().required('Quantidade da unidade obrigatório')
+        type: Yup.string().required('Tipo do cliente obrigatório'),
+        name: Yup.string().required('Nome do cliente obrigatório'),
+        cpf_cnpj: Yup.string(),
+        rg_ie: Yup.string(),
+        birthdate: Yup.string(),
+        phone: Yup.string(),
+        email: Yup.string(),
+        note: Yup.string()
       });
   
       await schema.validate(data, {
@@ -58,7 +63,7 @@ const ModalUnit: React.FC<ModalUnitProps> = ({
         return;
       }
 
-      // TODO: Criar Toast
+      // TODO: Create Toast
       console.log('Error', error);
     }
   }, [onSave]);
@@ -69,13 +74,18 @@ const ModalUnit: React.FC<ModalUnitProps> = ({
       onClose={onClose}
       classes={classes}
     >
-      <DialogTitle id="form-dialog-title">Nova Unidade</DialogTitle>
+      <DialogTitle id="form-dialog-title">Novo Cliente</DialogTitle>
       <Form
         ref={formRef}
         onSubmit={handleSubmit}
-        initialData={unitObj}
+        initialData={customerObj}
       >
         <DialogContent dividers>
+          <TheSelect
+            name="type"
+            label="Tipo"
+            onSelectChange={() => {}}
+          />
           <Input
             type="hidden"
             id="id"
@@ -86,32 +96,61 @@ const ModalUnit: React.FC<ModalUnitProps> = ({
             margin="normal"
             id="name"
             name="name"
-            label="Unidade"
+            label="Nome/Razão Social"
             autoFocus
             fullWidth
           />
           <Input
             variant="filled"
             margin="normal"
-            id="abbreviation"
-            name="abbreviation"
-            label="Abreviação"
+            id="cpf_cnpj"
+            name="cpf_cnpj"
+            label="CPF/CNPJ"
             fullWidth
           />
           <Input
             variant="filled"
             margin="normal"
-            id="quantity"
-            name="quantity"
-            label="Quantidade"
+            id="rg_ie"
+            name="rg_ie"
+            label="RG/IE"
             fullWidth
           />
-          {/* TODO: Learn how to use checkbox true or false fields */}
-          {/* <TheCheckbox
-            name="is_fraction"
-            label="Fracionada?"
-            value="is_fraction"
-          /> */}
+          <Input
+            variant="filled"
+            margin="normal"
+            type="date"
+            id="birthdate"
+            name="birthdate"
+            label="Nascimento"
+            fullWidth
+          />
+          <Input
+            variant="filled"
+            margin="normal"
+            type="tel"
+            id="phone"
+            name="phone"
+            label="Telefone"
+            fullWidth
+          />
+          <Input
+            variant="filled"
+            margin="normal"
+            type="email"
+            id="email"
+            name="email"
+            label="E-mail"
+            fullWidth
+          />
+          <Input
+            variant="filled"
+            margin="normal"
+            id="note"
+            name="note"
+            label="Note"
+            fullWidth
+          />
         </DialogContent>
         <DialogActions>
           <Button
@@ -133,4 +172,4 @@ const ModalUnit: React.FC<ModalUnitProps> = ({
   );
 }
 
-export default ModalUnit;
+export default ModalCustomer;

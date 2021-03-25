@@ -8,6 +8,7 @@ import Input from '../../../components/Input';
 import { Button, DialogActions, DialogContent, DialogTitle, makeStyles } from '@material-ui/core';
 import getValidationErrors from '../../../utils/getValidationErrors';
 import { DivisionFormData } from '../../../store/slices/DivisionSlice';
+import { createDivisionModel } from '../divisionUtils';
 
 const useStyles = makeStyles({
   paper: {
@@ -28,7 +29,7 @@ const ModalDivision: React.FC<ModalDivisionProps> = ({
   onSave,
   onClose
 }) => {
-  const divisionObj = editingDivision ? editingDivision : {} as DivisionFormData;
+  const divisionObj = editingDivision ? createDivisionModel(editingDivision) : createDivisionModel();
   const classes = useStyles();
   const formRef = useRef<FormHandles>(null);
 
