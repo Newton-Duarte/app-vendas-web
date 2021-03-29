@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { useAppSelector, useAppDispatch } from '../../hooks/hooks';
-import { addUnit, updateUnit, removeUnits, Selectors, UnitFormData } from '../../store/slices/UnitSlice';
+import { addUnit, updateUnitOnList, removeUnits, Selectors, UnitFormData, Async } from '../../store/slices/UnitSlice';
 import ModalUnit from './ModalUnit';
 import EnhancedTable from '../../components/DataTable';
 
@@ -13,8 +13,17 @@ const Units: React.FC = () => {
 
   const unitsData = useAppSelector(Selectors.units);
 
+  useEffect(() => {
+    async function loadUnits() {
+      const action = Async.fetchUnits();
+      dispatch(action);
+    }
+
+    loadUnits();
+  }, [dispatch]);
+
   const unitsHeaders = [
-    { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
+    { id: 'number', numeric: false, disablePadding: false, label: 'ID' },
     { id: 'name', numeric: false, disablePadding: false, label: 'Descrição' },
     { id: 'abbreviation', numeric: false, disablePadding: false, label: 'Abreviação' },
     { id: 'quantity', numeric: false, disablePadding: false, label: 'Quantidade' }
@@ -26,18 +35,31 @@ const Units: React.FC = () => {
 
   const handleSave = (data: UnitFormData) => {
     if (data.id) {
-      dispatch(
-        updateUnit(data)
-      );
+      const action = Async.updateUnit({
+        data,
+        onSuccess: (response) => {
+          dispatch(Async.fetchUnits())
+        },
+        onError: (e) => {
+          // TODO: Add Toast
+          console.log(e);
+        }
+      });
+
+      dispatch(action);
     } else {
-      const lastId = unitsData[unitsData.length - 1] ? +unitsData[unitsData.length - 1].id + 1 : 1;
-      data.id = lastId.toString();
-  
-      dispatch(
-        addUnit({
-          ...data
-        })
-      );
+      const action = Async.createUnit({
+        data,
+        onSuccess: (response) => {
+          dispatch(Async.fetchUnits())
+        },
+        onError: (e) => {
+          // TODO: Add Toast
+          console.log(e);
+        }
+      });
+
+      dispatch(action);
     }
 
     setModalOpen(!modalOpen);
@@ -54,9 +76,18 @@ const Units: React.FC = () => {
 
   const onDelete =(payload: string[]) => {
     if (window.confirm('Are you sure?')) {
-      dispatch(
-        removeUnits(payload)
-      )
+      const action = Async.deleteUnits({
+        units_ids: payload,
+        onSuccess: (response) => {
+          dispatch(Async.fetchUnits());
+        },
+        onError: (e) => {
+          // TODO: Add Toast
+          console.log(e);
+        }
+      });
+
+      dispatch(action);
     }
   }
 

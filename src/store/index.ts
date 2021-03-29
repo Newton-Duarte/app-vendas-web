@@ -1,9 +1,11 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { configureStore, combineReducers, getDefaultMiddleware } from '@reduxjs/toolkit';
 import unitSlice from './slices/UnitSlice';
 import groupSlice from './slices/GroupSlice';
 import divisionSlice from './slices/DivisionSlice';
 import productSlice from './slices/ProductSlice';
 import customerSlice from './slices/CustomerSlice';
+
+const middleware = [...getDefaultMiddleware()];
 
 const reducer = combineReducers({
   unit: unitSlice,
@@ -14,7 +16,8 @@ const reducer = combineReducers({
 });
 
 const store = configureStore({
-  reducer
+  reducer,
+  middleware
 })
 
 export default store;
